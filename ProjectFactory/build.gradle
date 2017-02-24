@@ -1,0 +1,15 @@
+alpha = 1
+versionNumber = 1
+secondaryVersion = 0
+tertiaryVersion = 0
+
+dependencies {
+    compile files("libs/Logger_V1.1.2.jar")
+}
+
+task generateSources {
+    generateSources(
+            "net.milosvasic.factory",
+            "net${File.separator}milosvasic${File.separator}factory"
+    )
+}

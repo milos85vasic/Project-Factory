@@ -1,0 +1,17 @@
+apply plugin: "java"
+apply plugin: "kotlin"
+
+buildscript {
+    ext.kotlin_version = '1.0.6'
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies.classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    dependencies.classpath "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
+
+configure([project(':ProjectFactory')]) {
+    apply from: "../commons.gradle"
+    apply from: "../deployment.gradle"
+}

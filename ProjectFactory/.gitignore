@@ -89,19 +89,13 @@ buildNumber.properties
 # Avoid ignoring Maven wrapper jar file (.jar files are usually ignored)
 !/.mvn/wrapper/maven-wrapper.jar
 
-local_samples/*
+samples/*
 
 build/*
 
 .gradle/*
 
-# Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!gradle-wrapper.jar
-
-# # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
-# gradle/wrapper/gradle-wrapper.properties
-
-gradle*
-Logs/*
+!libs/*.jar
+!Releases/*.jar
 
 credentials.gradle

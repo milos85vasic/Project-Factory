@@ -1,0 +1,88 @@
+apply plugin: "java"
+apply plugin: "kotlin"
+
+ext.alpha = 0
+ext.beta = 0
+ext.versionNumber = 1
+ext.secondaryVersion = 0
+ext.tertiaryVersion = 0
+
+buildscript {
+    ext.kotlin_version = '1.0.6'
+    repositories {
+        jcenter()
+        mavenCentral()
+    }
+    dependencies.classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    dependencies.classpath "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+}
+
+repositories {
+    jcenter()
+    mavenCentral()
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+
+    compile "junit:junit:4.12"
+    testCompile "junit:junit:4.12"
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    testCompile "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version"
+}
+
+sourceSets.main.kotlin.srcDirs += 'src/main/java'
+sourceSets.main.kotlin.srcDirs += 'src/main/kotlin'
+sourceSets.main.kotlin.srcDirs += 'build/generated-src/java'
+sourceSets.main.kotlin.srcDirs += 'build/generated-src/kotlin'
+
+version = String.format("%d.%d.%d", ext.versionNumber, ext.secondaryVersion, ext.tertiaryVersion)
+if (alpha > 0) {
+    version += "_Alpha_$alpha"
+} else if (beta > 0) {
+    version += "_Beta_$beta"
+}
+jar.archiveName = project.name + "_V" + version + ".jar"
+
+ext.generateSources = {
+    versionPackage, packageStructure ->
+        final destination = new File(
+                "${System.getProperty("user.dir")}${File.separator}${project.name}${File.separator}build${File.separator}generated-src${File.separator}kotlin${File.separator}${packageStructure}"
+        )
+        println("We are about to generate sources [ ${destination.absolutePath} ]")
+        if (destination.exists() || destination.mkdirs()) {
+            final classFile = new File(
+                    "$destination${File.separator}BuildConfig.kt"
+            )
+            final builder = new StringBuilder("package ${versionPackage}")
+                    .append("\n")
+                    .append("\n")
+                    .append("object BuildConfig {")
+                    .append("\n")
+                    .append("\n")
+                    .append("\tval VERSION = \"$version\"")
+                    .append("\n")
+                    .append("\tval NAME = \"${project.name}\"")
+                    .append("\n")
+                    .append("\n")
+                    .append("}")
+            classFile.write(builder.toString())
+            println("We generated file [ ${classFile.absolutePath} ]")
+        } else {
+            println("Couldn't initialize [ ${destination.absolutePath} ]")
+        }
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+    archiveName = project.name + "_V" + version + "_Sources.jar"
+}
+
+artifacts {
+    archives sourcesJar
+}

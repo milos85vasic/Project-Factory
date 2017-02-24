@@ -1,2 +1,2 @@
-# Project-Factory
-Abstractions / basics for Kotlin Factory and other related wizard projects.
+# Project Factory
+Abstractions / code base for Factory projects.
