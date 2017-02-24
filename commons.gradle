@@ -1,12 +1,6 @@
 apply plugin: "java"
 apply plugin: "kotlin"
 
-ext.alpha = 0
-ext.beta = 0
-ext.versionNumber = 1
-ext.secondaryVersion = 0
-ext.tertiaryVersion = 0
-
 buildscript {
     ext.kotlin_version = '1.0.6'
     repositories {
@@ -40,18 +34,24 @@ sourceSets.main.kotlin.srcDirs += 'src/main/kotlin'
 sourceSets.main.kotlin.srcDirs += 'build/generated-src/java'
 sourceSets.main.kotlin.srcDirs += 'build/generated-src/kotlin'
 
-version = String.format("%d.%d.%d", ext.versionNumber, ext.secondaryVersion, ext.tertiaryVersion)
-if (alpha > 0) {
-    version += "_Alpha_$alpha"
-} else if (beta > 0) {
-    version += "_Beta_$beta"
-}
-jar.archiveName = project.name + "_V" + version + ".jar"
-
 ext.generateSources = {
-    versionPackage, packageStructure ->
-        final destination = new File(
-                "${System.getProperty("user.dir")}${File.separator}${project.name}${File.separator}build${File.separator}generated-src${File.separator}kotlin${File.separator}${packageStructure}"
+    alpha, beta, versionNumber, secondaryVersion, tertiaryVersion, versionPackage ->
+
+        project.version = String.format("%d.%d.%d", versionNumber, secondaryVersion, tertiaryVersion)
+        if (alpha > 0) {
+            project.version += "_Alpha_$alpha"
+        } else if (beta > 0) {
+            project.version += "_Beta_$beta"
+        }
+        jar.archiveName = project.name + "_V" + project.version + ".jar"
+
+        StringBuilder packageStructure = new StringBuilder()
+        for (String item : versionPackage.split("\\.")) {
+            packageStructure.append(item)
+                    .append(File.separator)
+        }
+        File destination = new File(
+                "${System.getProperty("user.dir")}${File.separator}${project.name}${File.separator}build${File.separator}generated-src${File.separator}kotlin${File.separator}${packageStructure.toString()}"
         )
         println("We are about to generate sources [ ${destination.absolutePath} ]")
         if (destination.exists() || destination.mkdirs()) {
@@ -80,7 +80,7 @@ ext.generateSources = {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = 'sources'
     from sourceSets.main.allSource
-    archiveName = project.name + "_V" + version + "_Sources.jar"
+    archiveName = project.name + "_V" + project.version + "_Sources.jar"
 }
 
 artifacts {

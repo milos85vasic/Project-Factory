@@ -1,15 +1,19 @@
-alpha = 1
-versionNumber = 1
-secondaryVersion = 0
-tertiaryVersion = 0
-
 dependencies {
     compile files("libs/Logger_V1.1.2.jar")
 }
 
-task generateSources {
-    generateSources(
-            "net.milosvasic.factory",
-            "net${File.separator}milosvasic${File.separator}factory"
-    )
-}
+final alpha = 1
+final beta = 0
+final versionNumber = 1
+final secondaryVersion = 0
+final tertiaryVersion = 0
+final versionPackage = "net.milosvasic.factory"
+
+generateSources(
+        alpha,
+        beta,
+        versionNumber,
+        secondaryVersion,
+        tertiaryVersion,
+        versionPackage
+)
