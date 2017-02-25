@@ -6,13 +6,14 @@ String destination
 try {
     destination = deploy
 } catch (Exception e) {
-    destination = "development"
+    // Ignore.
 }
-if (destination == "development") {
-    apply from: "../credentials_development.gradle"
+if (destination != null && destination.length() > 0) {
+    apply from: "../credentials_${destination}.gradle"
 } else {
-    apply from: "../credentials_production.gradle"
+    apply from: "../credentials.gradle"
 }
+
 
 configurations {
     deployerJars
