@@ -2,7 +2,17 @@ apply plugin: "java"
 apply plugin: "kotlin"
 apply plugin: "maven"
 
-apply from: "../credentials.gradle"
+String destination
+try {
+    destination = deploy
+} catch (Exception e) {
+    destination = "development"
+}
+if (destination == "development") {
+    apply from: "../credentials_development.gradle"
+} else {
+    apply from: "../credentials_production.gradle"
+}
 
 configurations {
     deployerJars
@@ -13,6 +23,7 @@ dependencies {
 }
 
 uploadArchives {
+    println("Uploading to [ $destination ]")
     repositories.mavenDeployer {
         configuration = configurations.deployerJars
         repository(url: "ftp://$ftpServer") {
