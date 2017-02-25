@@ -15,5 +15,6 @@ setupProject(
         versionNumber,
         secondaryVersion,
         tertiaryVersion,
-        versionPackage
+        versionPackage,
+        true
 )
