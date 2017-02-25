@@ -14,7 +14,6 @@ if (destination != null && destination.length() > 0) {
     apply from: "../credentials.gradle"
 }
 
-
 configurations {
     deployerJars
 }

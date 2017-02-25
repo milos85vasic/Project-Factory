@@ -38,11 +38,22 @@ sourceSets.main.kotlin.srcDirs += 'build/generated-src/kotlin'
 ext.setupProject = {
     alpha, beta, versionNumber, secondaryVersion, tertiaryVersion, versionPackage, generatePOM ->
 
+        String buildVariant
+        try {
+            buildVariant = variant
+        } catch (Exception e) {
+            buildVariant = "DEV"
+        }
+
         project.version = String.format("%d.%d.%d", versionNumber, secondaryVersion, tertiaryVersion)
         if (alpha > 0) {
             project.version += "_Alpha_$alpha"
         } else if (beta > 0) {
             project.version += "_Beta_$beta"
+        }
+        project.version += "_${buildVariant}"
+        if (buildVariant == "DEV") {
+            project.version += "_${System.currentTimeMillis()}"
         }
         jar.archiveName = project.name + "_V" + project.version + ".jar"
 
