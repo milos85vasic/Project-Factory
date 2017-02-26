@@ -38,20 +38,20 @@ ext.compileRepoDep = {
                         builder.append(line)
                     }
                     rawXml = builder.toString()
+                    GPathResult xml = new XmlSlurper().parseText(rawXml)
+                    xml.versioning.versions.each {
+                        member ->
+                            member.children().each {
+                                tag ->
+                                    String textVersion = "$depVersion"
+                                    String query = textVersion.substring(0, textVersion.length() - 2)
+                                    if ("${tag.text()}".startsWith(query)) {
+                                        latestVersion = "${tag.text()}"
+                                    }
+                            }
+                    }
                 } catch (Exception e) {
                     println(String.format("Error contacting [ %s ][ %s ]", repo, e))
-                }
-                GPathResult xml = new XmlSlurper().parseText(rawXml)
-                xml.versioning.versions.each {
-                    member ->
-                        member.children().each {
-                            tag ->
-                                String textVersion = "$depVersion"
-                                String query = textVersion.substring(0, textVersion.length() - 2)
-                                if ("${tag.text()}".startsWith(query)) {
-                                    latestVersion = "${tag.text()}"
-                                }
-                        }
                 }
             }
             if (latestVersion != null && latestVersion.length() > 0) {
