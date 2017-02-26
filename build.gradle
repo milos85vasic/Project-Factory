@@ -13,5 +13,6 @@ buildscript {
 
 configure([project(':ProjectFactory')]) {
     apply from: "../commons.gradle"
+    apply from: "../compile.gradle"
     apply from: "../deployment.gradle"
 }
