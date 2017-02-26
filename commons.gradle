@@ -96,7 +96,7 @@ ext.setupProject = {
                 project {
                     packaging "pom"
                     groupId versionPackage
-                    artifactId project.name
+                    artifactId project.name + "-parent"
                     version project.version
                     inceptionYear new GregorianCalendar().get(Calendar.YEAR)
                     parent {
@@ -104,8 +104,22 @@ ext.setupProject = {
                         artifactId "oss-parent"
                         version 7
                     }
+                    modules {
+                        module project.name
+                    }
+                    properties {
+                        project {
+                            build {
+                                sourceEncoding "UTF-8"
+                            }
+                        }
+                        java {
+                            version "1.8"
+                        }
+                    }
                 }
-            }.writeTo("${rootProject.projectDir}/pom.xml")
+            }
+            .writeTo("${rootProject.projectDir}/pom.xml")
 
 
             println("Generating module POM")
