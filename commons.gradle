@@ -91,13 +91,37 @@ ext.setupProject = {
         }
 
         if (generatePOM) {
-            println("Generating POM")
+            println("Generating project POM")
             pom {
                 project {
+                    packaging "pom"
                     groupId versionPackage
                     artifactId project.name
                     version project.version
                     inceptionYear new GregorianCalendar().get(Calendar.YEAR)
+                    parent {
+                        groupId "org.sonatype.oss"
+                        artifactId "oss-parent"
+                        version 7
+                    }
+                }
+            }.writeTo("${rootProject.projectDir}/pom.xml")
+
+
+            println("Generating module POM")
+            pom {
+                project {
+                    packaging "pom"
+                    name project.name
+                    groupId versionPackage
+                    artifactId project.name
+                    version project.version
+                    inceptionYear new GregorianCalendar().get(Calendar.YEAR)
+                    parent {
+                        groupId versionPackage
+                        artifactId project.name + "-parent"
+                        version project.version
+                    }
                 }
             }.writeTo("$projectDir/pom.xml")
         }
