@@ -8,11 +8,21 @@ try {
 } catch (Exception e) {
     // Ignore.
 }
+File credentialsFile = new File(rootProject.projectDir, "credentials.gradle")
 if (destination != null && destination.length() > 0) {
-    apply from: "../credentials_${destination}.gradle"
-} else {
-    apply from: "../credentials.gradle"
+    credentialsFile = new File(rootProject.projectDir, "credentials_${destination}.gradle")
 }
+if (!credentialsFile.exists()) {
+    println("Credentials file does not exist. Creating default one.")
+    def srcStream = new File(rootProject.projectDir, "default_credentials.gradle").newDataInputStream()
+    def dstStream = credentialsFile.newDataOutputStream()
+    dstStream << srcStream
+    srcStream.close()
+    dstStream.close()
+} else {
+    println("Credentials file exist.")
+}
+apply from: credentialsFile.absolutePath
 
 configurations {
     deployerJars

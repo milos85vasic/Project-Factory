@@ -51,7 +51,9 @@ ext.setupProject = {
         } else if (beta > 0) {
             project.version += "_Beta_$beta"
         }
-        project.version += "_${buildVariant}"
+        if (buildVariant != "RELEASE") {
+            project.version += "_${buildVariant}"
+        }
         if (buildVariant == "DEV") {
             project.version += "_${System.currentTimeMillis()}"
         }
