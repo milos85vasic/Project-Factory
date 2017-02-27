@@ -1,7 +1,8 @@
+registerRepo("http://repo.milosvasic.net/releases")
 registerRepo("http://repo.milosvasic.net/development")
 
 dependencies {
-    compileRepoDep("net.milosvasic.logger", "Logger", "1.2.0_DEV_+")
+    compileRepoDep("net.milosvasic.logger", "Logger", "1.2.0")
 }
 
 final alpha = 1
