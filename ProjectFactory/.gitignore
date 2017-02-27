@@ -101,4 +101,3 @@ build/*
 credentials.gradle
 credentials_development.gradle
 credentials_production.gradle
-pom.xml
