@@ -1,5 +1,7 @@
+registerRepo("http://repo.milosvasic.net/development")
+
 dependencies {
-    compile files("libs/Logger_V1.1.2.jar")
+    compileRepoDep("net.milosvasic.logger", "Logger", "1.2.0_DEV_+")
 }
 
 final alpha = 1
