@@ -30,7 +30,8 @@ ext.compileRepoDep = {
                 println(String.format("Conatcting [ %s ]", repo))
                 String rawXml = ""
                 try {
-                    URL url = new URL("$repo/$depGroup/$depName/maven-metadata.xml")
+                    String group = depGroup.replace(".", "/")
+                    URL url = new URL("$repo/$group/$depName/maven-metadata.xml")
                     InputStream stream = url.openStream()
                     List<String> lines = stream.readLines()
                     StringBuilder builder = new StringBuilder()

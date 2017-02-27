@@ -17,3 +17,5 @@ setupProject(
         tertiaryVersion,
         versionPackage
 )
+
+setupDeployment(project.version, versionPackage)

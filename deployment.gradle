@@ -32,13 +32,22 @@ dependencies {
     deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
 }
 
-uploadArchives {
-    repositories.mavenDeployer {
-        configuration = configurations.deployerJars
-        repository(url: "ftp://$ftpServer") {
-            authentication(userName: ftpUsername, password: ftpPassword)
+ext.setupDeployment = {
+    deploymentVersion, versionPackage ->
+        uploadArchives {
+            repositories.mavenDeployer {
+                pom.name = project.name
+                pom.groupId = "$versionPackage"
+                pom.version = "$deploymentVersion"
+                pom.artifactId = project.name
+                pom.packaging = "pom"
+                configuration = configurations.deployerJars
+                repository(url: "ftp://$ftpServer") {
+                    authentication(userName: ftpUsername, password: ftpPassword)
+                }
+            }
         }
-    }
+
+        assemble.finalizedBy(uploadArchives)
 }
 
-assemble.finalizedBy(uploadArchives)
