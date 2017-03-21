@@ -1,29 +1,51 @@
-apply from: "../build.gradle"
-apply from: "../commons.gradle"
-apply from: "../compile.gradle"
-apply from: "../deployment.gradle"
-
-registerRepo("http://repo.milosvasic.net/releases")
-registerRepo("http://repo.milosvasic.net/development")
-
-dependencies {
-    compileRepoDep("net.milosvasic.logger", "Logger", "1.2.0")
+buildscript {
+    repositories {
+        jcenter()
+        mavenCentral()
+        maven {
+            url uri("http://repo.milosvasic.net/releases")
+        }
+    }
+    dependencies {
+        classpath group: 'net.milosvasic.groot', name: 'Groot', version: '1.0.0-Beta-2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.1.1"
+        classpath "org.jetbrains.kotlin:kotlin-reflect:1.1.1"
+    }
 }
+
+apply plugin: "groot"
+apply plugin: "groot-kotlin"
+apply plugin: "groot-credentials"
+
+groot.registerRepository("http://repo.milosvasic.net/releases")
+groot.registerRepository("http://repo.milosvasic.net/development")
+
+groot.kotlin.version = "1.1.1"
+
+groot.depend("net.milosvasic.logger", "Logger", "1.2.1")
 
 final alpha = 1
 final beta = 0
-final versionNumber = 1
+final version = 1
 final secondaryVersion = 0
 final tertiaryVersion = 0
-final versionPackage = "net.milosvasic.factory"
+final projectPackage = "factory"
+final projectGroup = "net.milosvasic"
 
-setupProject(
+groot.kotlin.project.setup(
         alpha,
         beta,
-        versionNumber,
+        version,
         secondaryVersion,
         tertiaryVersion,
-        versionPackage
+        projectGroup,
+        projectPackage
 )
 
-setupDeployment(project.version, versionPackage)
+String fullPackage = groot.kotlin.project.projectPackage
+String fullVersion = groot.kotlin.project.projectVersion
+
+groot.deployment.ftp.host = ftpServer
+groot.deployment.ftp.username = ftpUsername
+groot.deployment.ftp.password = ftpPassword
+groot.deployment.setup(fullPackage, fullVersion)
