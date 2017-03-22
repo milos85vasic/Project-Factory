@@ -23,6 +23,8 @@ groot.registerRepository("http://repo.milosvasic.net/development")
 groot.kotlin.version = "1.1.1"
 
 groot.depend("net.milosvasic.logger", "Logger", "1.2.1")
+groot.depend("com.google.code.gson", "gson", "2.8.0")
+groot.depend("com.github.salomonbrys.kotson", "kotson", "2.5.0")
 
 final alpha = 1
 final beta = 0
