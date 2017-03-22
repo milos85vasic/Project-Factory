@@ -3,6 +3,10 @@ package net.milosvasic.factory.utils
 
 object Text {
 
+    fun isEmpty(text: String?): Boolean {
+        return text == null || text.isEmpty()
+    }
+
     fun splitCamelCase(s: String): String {
         return s.replace(
                 String.format(
