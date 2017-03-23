@@ -7,12 +7,14 @@ import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.logger.SimpleLogger
+import net.milosvasic.factory.gradle.BuildGradleFactory
 import java.io.File
 
 abstract class ProjectFactory {
 
-    private val gson = Gson()
-    private val logger = SimpleLogger()
+    protected val gson = Gson()
+    protected val logger = SimpleLogger()
+    protected val buildGradleFactory = BuildGradleFactory()
     protected abstract val workingFolderName: String
 
     fun create(json: File): Boolean {
@@ -66,21 +68,7 @@ abstract class ProjectFactory {
         val localFile = File(root.absolutePath, "build.gradle")
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
-            localFile.appendText(
-                    """
-                        buildscript {
-                            repositories {
-                                jcenter()
-                                mavenCentral()
-                            }
-                        }
-
-                        repositories {
-                            jcenter()
-                            mavenCentral()
-                        }
-                """
-            )
+            localFile.appendText(buildGradleFactory.build())
             logger.v("", Messages.INITIALIZED(localFile.name))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
