@@ -7,6 +7,7 @@ import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
+import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.logger.SimpleLogger
 import java.io.File
 
@@ -14,8 +15,9 @@ abstract class ProjectFactory {
 
     protected val gson = Gson()
     protected val logger = SimpleLogger()
-    protected val buildGradleFactory = BuildScriptsFactory()
     protected abstract val workingFolderName: String
+    protected val gitignoreFactory = GitignoreFactory()
+    protected val buildGradleFactory = BuildScriptsFactory()
 
     fun create(json: File): Boolean {
         val jsonConfiguration = json.readText()
@@ -51,6 +53,7 @@ abstract class ProjectFactory {
     private fun initRootDirectory(project: Project, root: File) {
         createChangelog(root)
         createBuildGradle(root)
+        createGitignore(root)
     }
 
     private fun createChangelog(root: File) {
@@ -70,6 +73,17 @@ abstract class ProjectFactory {
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
             localFile.appendText(buildGradleFactory.build())
+            logger.v("", Messages.INITIALIZED(localFile.name))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createGitignore(root: File) {
+        val localFile = File(root.absolutePath, ".gitignore")
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING(localFile.name))
+            localFile.appendText(gitignoreFactory.build())
             logger.v("", Messages.INITIALIZED(localFile.name))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
