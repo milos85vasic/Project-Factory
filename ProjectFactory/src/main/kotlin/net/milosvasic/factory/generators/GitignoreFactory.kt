@@ -1,10 +1,12 @@
 package net.milosvasic.factory.generators
 
+import net.milosvasic.factory.module.Module
+
 
 class GitignoreFactory {
 
     private val rootGitignore =
-"""
+            """
 # Created by .ignore support plugin (hsz.mobi)
 ### Java template
 *.class
@@ -118,6 +120,14 @@ samples/*
 
     fun build(): String {
         return rootGitignore
+    }
+
+    fun build(module: Module): String {
+        return """"
+# Git ignore for module ':${module.name.replace(" ", "_")}'
+build/*
+credentials*.gradle
+                """
     }
 
 }

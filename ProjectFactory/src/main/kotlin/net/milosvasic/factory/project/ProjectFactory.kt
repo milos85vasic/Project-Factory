@@ -8,6 +8,7 @@ import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
+import net.milosvasic.factory.module.Module
 import net.milosvasic.logger.SimpleLogger
 import java.io.File
 
@@ -43,7 +44,7 @@ abstract class ProjectFactory {
                 if (!moduleDirectory.exists()) {
                     if (!moduleDirectory.mkdirs()) throw DirectoryCreationException(moduleDirectory)
                 }
-                // TODO: Handle module.
+                initModule(project, module, destination)
             }
 
         } else throw DirectoryCreationException(destination)
@@ -55,6 +56,10 @@ abstract class ProjectFactory {
         createBuildGradle(root)
         createGitignore(root)
         createSettingsGradle(project, root)
+    }
+
+    private fun initModule(project: Project, module: Module, root: File) {
+        createGitignore(module, root)
     }
 
     private fun createChangelog(root: File) {
@@ -91,19 +96,31 @@ abstract class ProjectFactory {
         }
     }
 
-    private fun createSettingsGradle(project: Project, root: File){
+    private fun createGitignore(module: Module, root: File) {
+        val name = module.name.replace(" ", "_")
+        val localFile = File("${root.absolutePath}${File.separator}$name", ".gitignore")
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
+            localFile.appendText(gitignoreFactory.build(module))
+            logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createSettingsGradle(project: Project, root: File) {
         val localFile = File(root.absolutePath, "settings.gradle")
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
             localFile.appendText("include ")
             project.modules.forEachIndexed {
                 index, module ->
-                    val settingsModule = "':${module.name.replace(" ", "_")}'"
-                    if(index > 0){
-                        localFile.appendText(", $settingsModule")
-                    } else {
-                        localFile.appendText(" $settingsModule")
-                    }
+                val settingsModule = "':${module.name.replace(" ", "_")}'"
+                if (index > 0) {
+                    localFile.appendText(", $settingsModule")
+                } else {
+                    localFile.appendText(" $settingsModule")
+                }
             }
             logger.v("", Messages.INITIALIZED(localFile.name))
         } else {
