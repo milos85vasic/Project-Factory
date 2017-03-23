@@ -54,6 +54,7 @@ abstract class ProjectFactory {
         createChangelog(root)
         createBuildGradle(root)
         createGitignore(root)
+        createSettingsGradle(project, root)
     }
 
     private fun createChangelog(root: File) {
@@ -84,6 +85,26 @@ abstract class ProjectFactory {
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
             localFile.appendText(gitignoreFactory.build())
+            logger.v("", Messages.INITIALIZED(localFile.name))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createSettingsGradle(project: Project, root: File){
+        val localFile = File(root.absolutePath, "settings.gradle")
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING(localFile.name))
+            localFile.appendText("include ")
+            project.modules.forEachIndexed {
+                index, module ->
+                    val settingsModule = "':${module.name.replace(" ", "_")}'"
+                    if(index > 0){
+                        localFile.appendText(", $settingsModule")
+                    } else {
+                        localFile.appendText(" $settingsModule")
+                    }
+            }
             logger.v("", Messages.INITIALIZED(localFile.name))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
