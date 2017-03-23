@@ -3,6 +3,7 @@ package net.milosvasic.factory.project
 import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import getHome
+import net.milosvasic.factory.authorization.Credential
 import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
@@ -60,6 +61,7 @@ abstract class ProjectFactory {
 
     private fun initModule(project: Project, module: Module, root: File) {
         createGitignore(module, root)
+        createCredentials(project, module, root)
     }
 
     private fun createChangelog(root: File) {
@@ -123,6 +125,40 @@ abstract class ProjectFactory {
                 }
             }
             logger.v("", Messages.INITIALIZED(localFile.name))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createCredentials(project: Project, module: Module, root: File) {
+        if (module.credentials != null && !module.credentials.isEmpty()) {
+            module.credentials.forEach {
+                credential ->
+                createCredential(credential, module, root)
+            }
+            return
+        }
+        if (project.credentials != null && !project.credentials.isEmpty()) {
+            project.credentials.forEach {
+                credential ->
+                createCredential(credential, module, root)
+            }
+        }
+    }
+
+    private fun createCredential(credential: Credential, module: Module, root: File) {
+        val name = module.name.replace(" ", "_")
+        var credentialsName = "credentials.gradle"
+        if (credential.name != Labels.DEFAULT.toLowerCase()) {
+            credentialsName = "credentials_${credential.name}.gradle"
+        }
+        val localFile = File("${root.absolutePath}${File.separator}$name", credentialsName)
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
+            localFile.appendText("ext.ftpServer = \"${credential.ftp.server}\"\n")
+            localFile.appendText("ext.ftpUsername = \"${credential.ftp.username}\"\n")
+            localFile.appendText("ext.ftpPassword = \"${credential.ftp.password}\"\n")
+            logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
         }
