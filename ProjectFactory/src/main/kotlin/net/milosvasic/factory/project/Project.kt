@@ -1,15 +1,12 @@
 package net.milosvasic.factory.project
 
+import com.google.gson.annotations.SerializedName
 import net.milosvasic.factory.module.Module
 import java.util.*
 
-class Project(val name: String) {
+open class Project(val name: String, @SerializedName("package") val pPackage: String, val group: String) {
 
     val modules = HashSet<Module>()
-
-    fun printVersion(): String {
-        return "1.0.0." // TODO: To be dynamic.
-    }
 
 }
 

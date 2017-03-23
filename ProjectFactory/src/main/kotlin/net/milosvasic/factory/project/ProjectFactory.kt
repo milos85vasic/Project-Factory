@@ -46,15 +46,41 @@ abstract class ProjectFactory {
     }
 
     private fun initRootDirectory(project: Project, root: File) {
-        createChangelog(project, root)
+        createChangelog(root)
+        createBuildGradle(root)
     }
 
-    private fun createChangelog(project: Project, root: File) {
+    private fun createChangelog(root: File) {
         val localFile = File(root.absolutePath, "CHANGELOG.md")
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
-            localFile.appendText("# Version ${project.printVersion()}\n\n")
+            localFile.appendText("# TBD\n\n")
             localFile.appendText("- TBD.\n")
+            logger.v("", Messages.INITIALIZED(localFile.name))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createBuildGradle(root: File) {
+        val localFile = File(root.absolutePath, "build.gradle")
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING(localFile.name))
+            localFile.appendText(
+                    """
+                        buildscript {
+                            repositories {
+                                jcenter()
+                                mavenCentral()
+                            }
+                        }
+
+                        repositories {
+                            jcenter()
+                            mavenCentral()
+                        }
+                """
+            )
             logger.v("", Messages.INITIALIZED(localFile.name))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
