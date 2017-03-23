@@ -6,8 +6,8 @@ import getHome
 import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
-import net.milosvasic.logger.SimpleLogger
 import net.milosvasic.factory.gradle.BuildGradleFactory
+import net.milosvasic.logger.SimpleLogger
 import java.io.File
 
 abstract class ProjectFactory {
@@ -38,9 +38,10 @@ abstract class ProjectFactory {
                 module ->
                 val moduleName = module.name.replace(" ", "_")
                 val moduleDirectory = File(destination.absolutePath, moduleName)
-                if (moduleDirectory.mkdirs()) {
-                    // TODO: Handle module.
-                } else throw DirectoryCreationException(moduleDirectory)
+                if (!moduleDirectory.exists()) {
+                    if (!moduleDirectory.mkdirs()) throw DirectoryCreationException(moduleDirectory)
+                }
+                // TODO: Handle module.
             }
 
         } else throw DirectoryCreationException(destination)
