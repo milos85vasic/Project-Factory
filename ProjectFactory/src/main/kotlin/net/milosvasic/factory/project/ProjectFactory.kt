@@ -52,6 +52,8 @@ abstract class ProjectFactory {
         return true
     }
 
+    protected abstract fun getModuleNonJavaDirectories(module: Module, root: File): List<File>
+
     private fun initRootDirectory(project: Project, root: File) {
         createChangelog(root)
         createBuildGradle(root)
@@ -172,7 +174,8 @@ abstract class ProjectFactory {
         val test = File("${localFile.absolutePath}${File.separator}test")
         val mainJava = File("${main.absolutePath}${File.separator}java")
         val testava = File("${test.absolutePath}${File.separator}java")
-        val direcories = listOf(localFile, main, test, mainJava, testava)
+        val direcories = mutableListOf(localFile, main, test, mainJava, testava)
+        direcories.addAll(getModuleNonJavaDirectories(module, root))
         direcories.forEach {
             dir -> initializeDirectory(dir)
         }
