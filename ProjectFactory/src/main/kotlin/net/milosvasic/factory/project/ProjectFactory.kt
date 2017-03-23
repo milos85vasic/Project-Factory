@@ -174,9 +174,22 @@ abstract class ProjectFactory {
         val test = File("${localFile.absolutePath}${File.separator}test")
         val mainJava = File("${main.absolutePath}${File.separator}java")
         val testava = File("${test.absolutePath}${File.separator}java")
-        val direcories = mutableListOf(localFile, main, test, mainJava, testava)
-        direcories.addAll(getModuleNonJavaDirectories(module, root))
-        direcories.forEach {
+        val directories = mutableListOf(localFile, main, test, mainJava, testava)
+        directories.addAll(getModuleNonJavaDirectories(module, root))
+
+        var packageDirectoryJava = mainJava.absolutePath
+        var packageDirectoryTest = testava.absolutePath
+        module.pPackage.split(".").forEach {
+            packageElement ->
+                packageDirectoryJava += File.separator + packageElement
+                packageDirectoryTest += File.separator + packageElement
+        }
+        packageDirectoryJava += File.separator + module.group
+        packageDirectoryTest += File.separator + module.group
+        directories.add(File(packageDirectoryJava))
+        directories.add(File(packageDirectoryTest))
+
+        directories.forEach {
             dir -> initializeDirectory(dir)
         }
     }

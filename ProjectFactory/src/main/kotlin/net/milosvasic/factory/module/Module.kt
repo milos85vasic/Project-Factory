@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import net.milosvasic.factory.authorization.Credential
 import sun.misc.Version
 
-open class Module(val name: String, @SerializedName("package") val pPackage: String) {
+open class Module(val name: String, @SerializedName("package") val pPackage: String, val group: String) {
 
     val version = Version()
     val isApplication = false
