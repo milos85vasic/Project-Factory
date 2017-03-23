@@ -6,7 +6,7 @@ import getHome
 import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.exception.DirectoryCreationException
-import net.milosvasic.factory.gradle.BuildGradleFactory
+import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.logger.SimpleLogger
 import java.io.File
 
@@ -14,7 +14,7 @@ abstract class ProjectFactory {
 
     protected val gson = Gson()
     protected val logger = SimpleLogger()
-    protected val buildGradleFactory = BuildGradleFactory()
+    protected val buildGradleFactory = BuildScriptsFactory()
     protected abstract val workingFolderName: String
 
     fun create(json: File): Boolean {

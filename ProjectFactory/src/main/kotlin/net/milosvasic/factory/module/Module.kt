@@ -9,9 +9,10 @@ import java.util.*
 open class Module(val name: String, @SerializedName("package") val pPackage: String) {
 
     val version = Version()
+    val isApplication = false
 
-    val repositories = HashSet<Repository>()
-    val moduleDependencies = HashSet<Module>()
-    val jarDependencies = HashSet<Jar>()
+//    val repositories = HashSet<Repository>()
+//    val moduleDependencies = HashSet<Module>()
+//    val jarDependencies = HashSet<Jar>()
 
 }
