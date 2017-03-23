@@ -62,6 +62,7 @@ abstract class ProjectFactory {
     private fun initModule(project: Project, module: Module, root: File) {
         createGitignore(module, root)
         createCredentials(project, module, root)
+        createSrcStructure(module, root)
     }
 
     private fun createChangelog(root: File) {
@@ -159,6 +160,29 @@ abstract class ProjectFactory {
             localFile.appendText("ext.ftpUsername = \"${credential.ftp.username}\"\n")
             localFile.appendText("ext.ftpPassword = \"${credential.ftp.password}\"\n")
             logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createSrcStructure(module: Module, root: File) {
+        val name = module.name.replace(" ", "_")
+        val localFile = File("${root.absolutePath}${File.separator}$name${File.separator}src")
+        val main = File("${localFile.absolutePath}${File.separator}main")
+        val test = File("${localFile.absolutePath}${File.separator}test")
+        val mainJava = File("${main.absolutePath}${File.separator}java")
+        val testava = File("${test.absolutePath}${File.separator}java")
+        val direcories = listOf(localFile, main, test, mainJava, testava)
+        direcories.forEach {
+            dir -> initializeDirectory(dir)
+        }
+    }
+
+    private fun initializeDirectory(localFile: File) {
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING(localFile.absolutePath))
+            if (!localFile.mkdirs()) throw IllegalStateException(Messages.INITIALIZATION_FAILED(localFile.absolutePath))
+            logger.v("", Messages.INITIALIZED(localFile.absolutePath))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
         }
