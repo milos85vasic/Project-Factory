@@ -4,8 +4,10 @@ import com.github.salomonbrys.kotson.fromJson
 import com.google.gson.Gson
 import getHome
 import net.milosvasic.factory.authorization.Credential
+import net.milosvasic.factory.configuration.Configuration
 import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
+import net.milosvasic.factory.dependency.Classpath
 import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
@@ -54,6 +56,8 @@ abstract class ProjectFactory {
 
     protected abstract fun getModuleNonJavaDirectories(module: Module, root: File): List<File>
 
+    protected abstract fun getClasspath(project: Project): Classpath
+
     private fun initRootDirectory(project: Project, root: File) {
         createChangelog(root)
         createBuildGradle(root)
@@ -65,6 +69,7 @@ abstract class ProjectFactory {
         createGitignore(module, root)
         createCredentials(project, module, root)
         createSrcStructure(module, root)
+        createBuildGradle(project, module, root)
     }
 
     private fun createChangelog(root: File) {
@@ -85,6 +90,20 @@ abstract class ProjectFactory {
             logger.v("", Messages.INITIALIZING(localFile.name))
             localFile.appendText(buildGradleFactory.build())
             logger.v("", Messages.INITIALIZED(localFile.name))
+        } else {
+            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        }
+    }
+
+    private fun createBuildGradle(project: Project, module: Module, root: File) {
+        val name = module.name.replace(" ", "_")
+        val localFile = File("${root.absolutePath}${File.separator}$name", "build.gradle")
+        if (!localFile.exists()) {
+            logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
+            val classpath = getClasspath(project)
+            classpath.dependencies.add(Configuration.groot.getDependency())
+            localFile.appendText(buildGradleFactory.build(module, classpath))
+            logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
         }
@@ -181,8 +200,8 @@ abstract class ProjectFactory {
         var packageDirectoryTest = testava.absolutePath
         module.pPackage.split(".").forEach {
             packageElement ->
-                packageDirectoryJava += File.separator + packageElement
-                packageDirectoryTest += File.separator + packageElement
+            packageDirectoryJava += File.separator + packageElement
+            packageDirectoryTest += File.separator + packageElement
         }
         packageDirectoryJava += File.separator + module.group
         packageDirectoryTest += File.separator + module.group
@@ -190,7 +209,8 @@ abstract class ProjectFactory {
         directories.add(File(packageDirectoryTest))
 
         directories.forEach {
-            dir -> initializeDirectory(dir)
+            dir ->
+            initializeDirectory(dir)
         }
     }
 

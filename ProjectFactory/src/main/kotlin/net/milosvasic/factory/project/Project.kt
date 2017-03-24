@@ -6,6 +6,7 @@ import java.util.*
 
 open class Project(val name: String, val group: String) {
 
+    val languageVersion = ""
     val modules = HashSet<Module>()
     val credentials = mutableListOf<Credential>()
 
