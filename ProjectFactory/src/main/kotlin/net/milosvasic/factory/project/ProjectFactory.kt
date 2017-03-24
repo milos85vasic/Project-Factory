@@ -40,7 +40,7 @@ abstract class ProjectFactory {
         )
         if (destination.mkdirs()) {
             initRootDirectory(project, destination)
-            project.modules.forEach {
+            project.modules?.forEach {
                 module ->
                 val moduleName = module.name.replace(" ", "_")
                 val moduleDirectory = File(destination.absolutePath, moduleName)
@@ -102,7 +102,7 @@ abstract class ProjectFactory {
             logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
             val classpath = getClasspath(project)
             classpath.dependencies.add(Configuration.groot.getDependency())
-//            localFile.appendText(buildGradleFactory.build(project, module, classpath))
+            localFile.appendText(buildGradleFactory.build(project, module, classpath))
             logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
@@ -137,7 +137,7 @@ abstract class ProjectFactory {
         if (!localFile.exists()) {
             logger.v("", Messages.INITIALIZING(localFile.name))
             localFile.appendText("include ")
-            project.modules.forEachIndexed {
+            project.modules?.forEachIndexed {
                 index, module ->
                 val settingsModule = "':${module.name.replace(" ", "_")}'"
                 if (index > 0) {

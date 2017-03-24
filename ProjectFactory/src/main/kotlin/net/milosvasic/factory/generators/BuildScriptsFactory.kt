@@ -27,24 +27,27 @@ repositories {
     }
 
     fun build(project: Project, module: Module, classpath: Classpath): String {
-        return """
-buildscript {
-    repositories {
-        jcenter()
-        mavenCentral()
-        maven {
-            url uri("${Configuration.repo}")
-        }
-    }
-    dependencies {
-        ${classpath.print()}
-    }
-}
-
-${project.plugins.print()}
-${module.plugins.print()}
-
-"""
+        val builder = StringBuilder()
+        builder.append(
+                """
+                    buildscript {
+                        repositories {
+                            jcenter()
+                            mavenCentral()
+                            maven {
+                                url uri("${Configuration.repo}")
+                            }
+                        }
+                        dependencies {
+                            ${classpath.print()}
+                        }
+                    }
+                """
+        )
+        if (project.language != null) {
+            builder.append(module.getPlugins(project.language).print())
+        } else throw IllegalStateException("")
+        return builder.toString()
     }
 
 }
