@@ -11,12 +11,9 @@ import sun.misc.Version
 open class Module(val name: String, @SerializedName("package") val pPackage: String, val group: String) {
 
     val isApplication = false
-    val version : Version? = Version()
-    private val plugins : Plugins? = Plugins()
+    val version: Version? = Version()
+    private val plugins: Plugins? = Plugins()
     val credentials: MutableList<Credential>? = mutableListOf()
-
-    @Transient
-    private val logger = SimpleLogger()
 
     fun getPlugins(language: Language): Plugins {
         val pluginsSet = Plugins()
@@ -26,7 +23,7 @@ open class Module(val name: String, @SerializedName("package") val pPackage: Str
         if (plugins?.collection != null) {
             pluginsSet.collection?.addAll(plugins.collection)
         } else {
-            logger.w("", "Module has no additional plugins set.")
+            SimpleLogger().w("", "Module has no additional plugins set.")
         }
         return pluginsSet
     }
