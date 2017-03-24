@@ -102,7 +102,7 @@ abstract class ProjectFactory {
             logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
             val classpath = getClasspath(project)
             classpath.dependencies.add(Configuration.groot.getDependency())
-            localFile.appendText(buildGradleFactory.build(module, classpath))
+//            localFile.appendText(buildGradleFactory.build(project, module, classpath))
             logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))

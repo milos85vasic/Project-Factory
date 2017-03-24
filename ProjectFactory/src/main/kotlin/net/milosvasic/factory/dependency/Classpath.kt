@@ -1,10 +1,15 @@
 package net.milosvasic.factory.dependency
 
+import net.milosvasic.logger.SimpleLogger
+
 class Classpath {
 
+    @Transient
+    private val logger = SimpleLogger()
     val dependencies = mutableListOf<Dependency>()
 
     fun print(): String {
+        logger.v("", "printing classpath dependencies [ START ]")
         val builder = StringBuilder()
         dependencies.forEachIndexed {
             index, dependency ->
@@ -13,7 +18,9 @@ class Classpath {
                 builder.append("\n\t\t\t\t")
             }
         }
-        return builder.toString()
+        val result = builder.toString()
+        logger.v("", "printing classpath dependencies [ END ]")
+        return result
     }
 
 }
