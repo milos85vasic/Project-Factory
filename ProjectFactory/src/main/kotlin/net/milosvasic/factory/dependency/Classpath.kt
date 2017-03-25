@@ -10,7 +10,7 @@ class Classpath {
             index, dependency ->
             builder.append("classpath \"${dependency.group}:${dependency.name}:${dependency.version}\"")
             if (index < dependencies.lastIndex) {
-                builder.append("\n\t\t\t\t")
+                builder.append("\n\t\t")
             }
         }
         return builder.toString()

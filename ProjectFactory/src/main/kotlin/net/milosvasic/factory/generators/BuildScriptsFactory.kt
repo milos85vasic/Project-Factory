@@ -28,22 +28,18 @@ repositories {
 
     fun build(project: Project, module: Module, classpath: Classpath): String {
         val builder = StringBuilder()
-        builder.append(
-                """
-                    buildscript {
-                        repositories {
-                            jcenter()
-                            mavenCentral()
-                            maven {
-                                url uri("${Configuration.repo}")
-                            }
-                        }
-                        dependencies {
-                            ${classpath.print()}
-                        }
-                    }
-                """
-        )
+        builder.append("buildscript {\n")
+                .append("\trepositories {\n")
+                .append("\t\tjcenter()\n")
+                .append("\t\tmavenCentral()\n")
+                .append("\t\tmaven {\n")
+                .append("\t\t\turl uri(\"${Configuration.repo}\")\n")
+                .append("\t\t}\n")
+                .append("\t}\n")
+                .append("\tdependencies {\n")
+                .append("\t\t${classpath.print()}\n")
+                .append("\t}\n")
+                .append("}\n\n")
         if (project.language != null) {
             builder.append(module.getPlugins(project.language).print())
         } else throw IllegalStateException("")
