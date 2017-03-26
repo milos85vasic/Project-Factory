@@ -6,7 +6,9 @@ import net.milosvasic.factory.langauge.Language
 import net.milosvasic.factory.plugin.Plugin
 import net.milosvasic.factory.plugin.Plugins
 import net.milosvasic.logger.SimpleLogger
-import sun.misc.Version
+import net.milosvasic.factory.Version
+
+
 
 open class Module(val name: String, @SerializedName("package") val pPackage: String, val group: String) {
 

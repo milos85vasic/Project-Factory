@@ -1,6 +1,7 @@
 package net.milosvasic.factory.generators
 
 import net.milosvasic.factory.configuration.Configuration
+import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.dependency.Classpath
 import net.milosvasic.factory.module.Module
 import net.milosvasic.factory.project.Project
@@ -27,60 +28,58 @@ repositories {
     }
 
     fun build(project: Project, module: Module, classpath: Classpath): String {
-        val builder = StringBuilder()
-        builder.append("buildscript {\n")
-                .append("\trepositories {\n")
-                .append("\t\tjcenter()\n")
-                .append("\t\tmavenCentral()\n")
-                .append("\t\tmaven {\n")
-                .append("\t\t\turl uri(\"${Configuration.repo}\")\n")
-                .append("\t\t}\n")
-                .append("\t}\n")
-                .append("\tdependencies {\n")
-                .append("\t\t${classpath.print()}\n")
-                .append("\t}\n")
-                .append("}\n\n")
         if (project.language != null) {
-            builder.append(module.getPlugins(project.language).print())
-        } else throw IllegalStateException("")
-        return builder.toString()
+            if (module.version != null) {
+                val builder = StringBuilder()
+                builder.append("buildscript {\n")
+                        .append("\trepositories {\n")
+                        .append("\t\tjcenter()\n")
+                        .append("\t\tmavenCentral()\n")
+                        .append("\t\tmaven {\n")
+                        .append("\t\t\turl uri(\"${Configuration.repo}\")\n")
+                        .append("\t\t}\n")
+                        .append("\t}\n")
+                        .append("\tdependencies {\n")
+                        .append("\t\t${classpath.print()}\n")
+                        .append("\t}\n")
+                        .append("}\n\n")
+                        .append(module.getPlugins(project.language).print())
+                        .append("groot.registerRepository(\"${Configuration.repo}\")\n\n")
+                        .append("groot.${project.language.name.toLowerCase()}.version = \"${project.language.version}\"\n\n")
+                        .append("final alpha = ${module.version.alpha}\n")
+                        .append("final beta = ${module.version.beta}\n")
+                        .append("final version = ${module.version.primary}\n")
+                        .append("final secondaryVersion = ${module.version.secondary}\n")
+                        .append("final tertiaryVersion = ${module.version.tertiary}\n")
+                        .append("final projectPackage = \"${module.pPackage}\"\n")
+                        .append("final projectGroup = \"${module.group}\"\n\n")
+                        .append("groot.${project.language.name.toLowerCase()}.project.setup(\n")
+                        .append("\talpha,\n")
+                        .append("\tbeta,\n")
+                        .append("\tversion,\n")
+                        .append("\tsecondaryVersion,\n")
+                        .append("\ttertiaryVersion,\n")
+                        .append("\tprojectGroup,\n")
+                        .append("\tprojectPackage\n")
+                        .append(")\n\n")
+                        .append("String fullPackage = groot.${project.language.name.toLowerCase()}.project.projectPackage\n")
+                        .append("String fullVersion = groot.${project.language.name.toLowerCase()}.project.projectVersion\n\n")
+
+                if (module.isApplication) {
+                    builder.append("groot.${project.language.name.toLowerCase()}.application.setup(fullPackage)\n\n")
+                }
+
+                if (module.credentials != null || project.credentials != null) {
+                    builder.append("groot.deployment.ftp.host = ftpServer\n")
+                            .append("groot.deployment.ftp.username = ftpUsername\n")
+                            .append("groot.deployment.ftp.password = ftpPassword\n")
+                            .append("groot.deployment.setup(fullPackage, fullVersion)\n\n")
+                }
+
+                return builder.toString()
+            } else throw IllegalStateException(Messages.NO_VERSION_SPECIFIED(module))
+        } else throw IllegalStateException(Messages.NO_LANGUAGE_SPECIFIED)
     }
 
 }
 
-/**
- *
-groot.registerRepository("http://repo.milosvasic.net/releases")
-groot.registerRepository("http://repo.milosvasic.net/development")
-
-groot.kotlin.version = "1.1.1"
-
-final alpha = 1
-final beta = 0
-final version = 1
-final secondaryVersion = 0
-final tertiaryVersion = 0
-final projectPackage = "kotlin"
-final projectGroup = "net.milosvasic.tryout.groot"
-
-groot.kotlin.project.setup(
-alpha,
-beta,
-version,
-secondaryVersion,
-tertiaryVersion,
-projectGroup,
-projectPackage
-)
-
-String fullPackage = groot.kotlin.project.projectPackage
-String fullVersion = groot.kotlin.project.projectVersion
-
-groot.kotlin.application.setup(fullPackage)
-
-groot.deployment.ftp.host = ftpServer
-groot.deployment.ftp.username = ftpUsername
-groot.deployment.ftp.password = ftpPassword
-groot.deployment.setup(fullPackage, fullVersion)
- *
- */

@@ -11,6 +11,9 @@ class Plugins {
             builder
                     .append(plugin.print())
                     .append("\n")
+            if (collection.indexOf(plugin) == collection.lastIndex) {
+                builder.append("\n")
+            }
         }
         return builder.toString()
     }
