@@ -5,6 +5,6 @@ object Configuration {
     val groot = Groot
     val gradleVersion = "3.4.1"
     val repo = "http://repo.milosvasic.net/releases"
-    val distributions = "http://milosvasic.net/distributions"
+    val distributions = "http://static.milosvasic.net/distributions"
 
 }

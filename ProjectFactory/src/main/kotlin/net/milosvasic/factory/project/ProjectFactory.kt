@@ -13,6 +13,7 @@ import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.factory.module.Module
 import net.milosvasic.logger.SimpleLogger
+import java.io.BufferedInputStream
 import java.io.File
 import java.net.URL
 
@@ -227,15 +228,18 @@ abstract class ProjectFactory {
     }
 
     private fun initLocalGradleDistribution(home: File) {
+        val zipFile = "gradle-${Configuration.gradleVersion}-bin.zip"
         val destination = File(home.absolutePath, ".gradle")
         if (!destination.exists()) {
             destination.mkdirs()
         }
-        val location = "${Configuration.distributions}/gradle/gradle-${Configuration.gradleVersion}-bin"
+        val location = "${Configuration.distributions}/gradle/$zipFile"
+        val zipFileDestination = File(destination.absolutePath, zipFile)
         logger.v("", "Retrieving [ $location ]")
         val url = URL(location)
         val input = url.openConnection().getInputStream()
-        destination.writeBytes(input.readBytes())
+        val bufferedInput = BufferedInputStream(input)
+        zipFileDestination.writeBytes(bufferedInput.readBytes())
     }
 
 }
