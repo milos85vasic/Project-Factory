@@ -14,6 +14,7 @@ import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.factory.module.Module
 import net.milosvasic.logger.SimpleLogger
 import java.io.File
+import java.net.URL
 
 abstract class ProjectFactory {
 
@@ -226,7 +227,10 @@ abstract class ProjectFactory {
     }
 
     private fun initLocalGradleDistribution() {
-
+        val location = "${Configuration.distributions}/gradle/gradle-${Configuration.gradleVersion}-bin"
+        logger.v("", "Retrieving [ $location ]")
+        val url = URL(location)
+        
     }
 
 }
