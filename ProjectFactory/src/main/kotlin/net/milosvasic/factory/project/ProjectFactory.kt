@@ -12,6 +12,7 @@ import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.factory.module.Module
+import net.milosvasic.factory.utils.Zip
 import net.milosvasic.logger.SimpleLogger
 import java.io.BufferedInputStream
 import java.io.File
@@ -228,6 +229,7 @@ abstract class ProjectFactory {
     }
 
     private fun initLocalGradleDistribution(home: File) {
+        val zip = Zip()
         val zipFile = "gradle-${Configuration.gradleVersion}-bin.zip"
         val destination = File(home.absolutePath, ".gradle")
         if (!destination.exists()) {
@@ -235,11 +237,17 @@ abstract class ProjectFactory {
         }
         val location = "${Configuration.distributions}/gradle/$zipFile"
         val zipFileDestination = File(destination.absolutePath, zipFile)
-        logger.v("", "Retrieving [ $location ]")
-        val url = URL(location)
-        val input = url.openConnection().getInputStream()
-        val bufferedInput = BufferedInputStream(input)
-        zipFileDestination.writeBytes(bufferedInput.readBytes())
+        if (!zipFileDestination.exists()) {
+            logger.v("", Messages.RETRIEVING(location))
+            val url = URL(location)
+            val input = url.openConnection().getInputStream()
+            val bufferedInput = BufferedInputStream(input)
+            zipFileDestination.writeBytes(bufferedInput.readBytes())
+            logger.v("", Messages.EXTRACTING(zipFileDestination.absolutePath))
+            zip.unzip(zipFileDestination, destination)
+        } else {
+            logger.v("", Messages.LOCAL_GRADLE_DISTRIBUTION_ALREADY_AVAILABLE(Configuration.gradleVersion))
+        }
     }
 
 }
