@@ -34,7 +34,7 @@ abstract class ProjectFactory {
             return false
         }
         val home = getHome(workingFolderName)
-        initLocalGradleDistribution()
+        initLocalGradleDistribution(home)
         val name = project.name.replace(" ", "_")
         val destination = File(home.absolutePath, name)
         if (destination.exists()) throw IllegalStateException(
@@ -226,11 +226,16 @@ abstract class ProjectFactory {
         }
     }
 
-    private fun initLocalGradleDistribution() {
+    private fun initLocalGradleDistribution(home: File) {
+        val destination = File(home.absolutePath, ".gradle")
+        if (!destination.exists()) {
+            destination.mkdirs()
+        }
         val location = "${Configuration.distributions}/gradle/gradle-${Configuration.gradleVersion}-bin"
         logger.v("", "Retrieving [ $location ]")
         val url = URL(location)
-        
+        val input = url.openConnection().getInputStream()
+        destination.writeBytes(input.readBytes())
     }
 
 }
