@@ -1,6 +1,6 @@
 # Version 1.0.0 Alpha 2
 
-- TBD.
+- Downloading local Gradle version.
 
 # Version 1.0.0 Alpha 1
 

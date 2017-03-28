@@ -33,6 +33,7 @@ abstract class ProjectFactory {
             return false
         }
         val home = getHome(workingFolderName)
+        initLocalGradleDistribution()
         val name = project.name.replace(" ", "_")
         val destination = File(home.absolutePath, name)
         if (destination.exists()) throw IllegalStateException(
@@ -222,6 +223,10 @@ abstract class ProjectFactory {
         } else {
             logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
         }
+    }
+
+    private fun initLocalGradleDistribution() {
+
     }
 
 }
