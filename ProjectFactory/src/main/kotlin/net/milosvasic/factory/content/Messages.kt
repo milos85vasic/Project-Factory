@@ -5,6 +5,10 @@ import java.io.File
 
 object Messages {
 
+    val GRADLE_TEST = "Test"
+    val GRADLE_CLEAN = "Clean"
+    val GRADLE_ASSEMBLE = "Assemble"
+    fun GRADLE(what: String) = "Gradle [ $what ]"
     val NO_LANGUAGE_SPECIFIED = "No language specified."
     val PROJECT_ALREADY_EXIST = "Project already exists"
     fun RETRIEVING(what: String) = "Retrieving [ $what ]"

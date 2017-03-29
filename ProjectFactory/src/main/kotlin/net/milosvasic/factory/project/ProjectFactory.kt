@@ -56,8 +56,7 @@ abstract class ProjectFactory {
             }
 
         } else throw DirectoryCreationException(destination)
-        initGradleWrapper(gradleHome, destination)
-        return true
+        return runGradle(gradleHome, destination)
     }
 
     protected abstract fun getModuleNonJavaDirectories(module: Module, root: File): List<File>
@@ -253,7 +252,7 @@ abstract class ProjectFactory {
         return destination
     }
 
-    private fun initGradleWrapper(gradleHome: File, root: File) {
+    private fun runGradle(gradleHome: File, root: File): Boolean {
         val version = Configuration.gradleVersion
         logger.v("", Messages.INITIALIZING("Gradle Wrapper $version"))
         var gradleExecutable = "gradle"
@@ -272,15 +271,36 @@ abstract class ProjectFactory {
         )
         val gradleExecutableFile = File(gradleExecutablePath)
         gradleExecutableFile.setExecutable(true)
-        val pb = ProcessBuilder(
+        var pb = ProcessBuilder(
                 gradleExecutablePath,
                 "wrapper",
                 "--gradle-version",
                 version
         )
         pb.directory(root)
-        pb.start().waitFor()
+        if (pb.start().waitFor() != 0) {
+            return false
+        }
         logger.v("", Messages.INITIALIZED("Gradle Wrapper $version"))
+        logger.v("", Messages.GRADLE(Messages.GRADLE_CLEAN))
+        pb = ProcessBuilder("./gradlew", "clean")
+        pb.directory(root)
+        if (pb.start().waitFor() != 0) {
+            return false
+        }
+        logger.v("", Messages.GRADLE(Messages.GRADLE_ASSEMBLE))
+        pb = ProcessBuilder("./gradlew", "assemble")
+        pb.directory(root)
+        if (pb.start().waitFor() != 0) {
+            return false
+        }
+        logger.v("", Messages.GRADLE(Messages.GRADLE_TEST))
+        pb = ProcessBuilder("./gradlew", "test")
+        pb.directory(root)
+        if (pb.start().waitFor() != 0) {
+            return false
+        }
+        return true
     }
 
 }
