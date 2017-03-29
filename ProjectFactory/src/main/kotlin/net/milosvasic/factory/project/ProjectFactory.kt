@@ -12,6 +12,7 @@ import net.milosvasic.factory.exception.DirectoryCreationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.factory.module.Module
+import net.milosvasic.factory.utils.OS
 import net.milosvasic.factory.utils.Zip
 import net.milosvasic.logger.SimpleLogger
 import java.io.BufferedInputStream
@@ -36,7 +37,7 @@ abstract class ProjectFactory {
             return false
         }
         val home = getHome(workingFolderName)
-        initLocalGradleDistribution(home)
+        val gradleHome = initLocalGradleDistribution(home)
         val name = project.name.replace(" ", "_")
         val destination = File(home.absolutePath, name)
         if (destination.exists()) throw IllegalStateException(
@@ -55,6 +56,7 @@ abstract class ProjectFactory {
             }
 
         } else throw DirectoryCreationException(destination)
+        initGradleWrapper(gradleHome, destination)
         return true
     }
 
@@ -228,7 +230,7 @@ abstract class ProjectFactory {
         }
     }
 
-    private fun initLocalGradleDistribution(home: File) {
+    private fun initLocalGradleDistribution(home: File): File {
         val zip = Zip()
         val zipFile = "gradle-${Configuration.gradleVersion}-bin.zip"
         val destination = File(home.absolutePath, ".gradle")
@@ -248,6 +250,37 @@ abstract class ProjectFactory {
         } else {
             logger.v("", Messages.LOCAL_GRADLE_DISTRIBUTION_ALREADY_AVAILABLE(Configuration.gradleVersion))
         }
+        return destination
+    }
+
+    private fun initGradleWrapper(gradleHome: File, root: File) {
+        val version = Configuration.gradleVersion
+        logger.v("", Messages.INITIALIZING("Gradle Wrapper $version"))
+        var gradleExecutable = "gradle"
+        if (OS.isWindows()) {
+            gradleExecutable += ".bat"
+        }
+        val gradleExecutablePath = String.format(
+                "%s%s%s%s%s%s%s",
+                gradleHome.absolutePath,
+                File.separator,
+                "gradle-$version",
+                File.separator,
+                "bin",
+                File.separator,
+                gradleExecutable
+        )
+        val gradleExecutableFile = File(gradleExecutablePath)
+        gradleExecutableFile.setExecutable(true)
+        val pb = ProcessBuilder(
+                gradleExecutablePath,
+                "wrapper",
+                "--gradle-version",
+                version
+        )
+        pb.directory(root)
+        pb.start().waitFor()
+        logger.v("", Messages.INITIALIZED("Gradle Wrapper $version"))
     }
 
 }
