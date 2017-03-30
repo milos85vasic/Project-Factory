@@ -9,6 +9,7 @@ import net.milosvasic.factory.content.Labels
 import net.milosvasic.factory.content.Messages
 import net.milosvasic.factory.dependency.Classpath
 import net.milosvasic.factory.exception.DirectoryCreationException
+import net.milosvasic.factory.exception.GitInitializationException
 import net.milosvasic.factory.generators.BuildScriptsFactory
 import net.milosvasic.factory.generators.GitignoreFactory
 import net.milosvasic.factory.module.Module
@@ -64,6 +65,7 @@ abstract class ProjectFactory {
     protected abstract fun getClasspath(project: Project): Classpath
 
     private fun initRootDirectory(project: Project, root: File) {
+        initGitRepository(project, root)
         createChangelog(root)
         createBuildGradle(root)
         createGitignore(root)
@@ -282,25 +284,36 @@ abstract class ProjectFactory {
             return false
         }
         logger.v("", Messages.INITIALIZED("Gradle Wrapper $version"))
-        logger.v("", Messages.GRADLE(Messages.GRADLE_CLEAN))
+        logger.v("", Messages.GRADLE(Labels.GRADLE_CLEAN))
         pb = ProcessBuilder("./gradlew", "clean")
         pb.directory(root)
         if (pb.start().waitFor() != 0) {
             return false
         }
-        logger.v("", Messages.GRADLE(Messages.GRADLE_ASSEMBLE))
+        logger.v("", Messages.GRADLE(Labels.GRADLE_ASSEMBLE))
         pb = ProcessBuilder("./gradlew", "assemble")
         pb.directory(root)
         if (pb.start().waitFor() != 0) {
             return false
         }
-        logger.v("", Messages.GRADLE(Messages.GRADLE_TEST))
+        logger.v("", Messages.GRADLE(Labels.GRADLE_TEST))
         pb = ProcessBuilder("./gradlew", "test")
         pb.directory(root)
         if (pb.start().waitFor() != 0) {
             return false
         }
         return true
+    }
+
+    private fun initGitRepository(project: Project, root: File) {
+        if (project.git != null) {
+            logger.v("", Messages.GRADLE(Labels.GIT_REPOSITORY))
+            val pb = ProcessBuilder("git", "clone", project.git.cloneUrl, "./")
+            pb.directory(root)
+            if (pb.start().waitFor() != 0) {
+                throw GitInitializationException()
+            }
+        }
     }
 
 }
