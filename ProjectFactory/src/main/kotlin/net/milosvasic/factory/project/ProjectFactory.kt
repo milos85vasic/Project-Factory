@@ -118,25 +118,27 @@ abstract class ProjectFactory {
 
     private fun createGitignore(root: File) {
         val localFile = File(root.absolutePath, ".gitignore")
-        if (!localFile.exists()) {
-            logger.v("", Messages.INITIALIZING(localFile.name))
-            localFile.appendText(gitignoreFactory.build())
-            logger.v("", Messages.INITIALIZED(localFile.name))
-        } else {
-            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        if (localFile.exists()) {
+            if (!localFile.delete()) {
+                throw IllegalStateException(Messages.COULD_NOT_DELETE_FILE(localFile))
+            }
         }
+        logger.v("", Messages.INITIALIZING(localFile.name))
+        localFile.appendText(gitignoreFactory.build())
+        logger.v("", Messages.INITIALIZED(localFile.name))
     }
 
     private fun createGitignore(module: Module, root: File) {
         val name = module.name.replace(" ", "_")
         val localFile = File("${root.absolutePath}${File.separator}$name", ".gitignore")
-        if (!localFile.exists()) {
-            logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
-            localFile.appendText(gitignoreFactory.build(module))
-            logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
-        } else {
-            logger.w("", Messages.FILE_ALREADY_EXIST(localFile))
+        if (localFile.exists()) {
+            if (!localFile.delete()) {
+                throw IllegalStateException(Messages.COULD_NOT_DELETE_FILE(localFile))
+            }
         }
+        logger.v("", Messages.INITIALIZING("$name${File.separator}${localFile.name}"))
+        localFile.appendText(gitignoreFactory.build(module))
+        logger.v("", Messages.INITIALIZED("$name${File.separator}${localFile.name}"))
     }
 
     private fun createSettingsGradle(project: Project, root: File) {

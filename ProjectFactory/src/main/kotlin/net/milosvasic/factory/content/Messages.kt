@@ -18,5 +18,6 @@ object Messages {
     fun FILE_ALREADY_EXIST(file: File) = "File already exist: ${file.absolutePath}"
     fun NO_VERSION_SPECIFIED(module: Module) = "No version specified for the module [ ${module.name.replace(" ", "_")} ]"
     fun LOCAL_GRADLE_DISTRIBUTION_ALREADY_AVAILABLE(version: String) = "Local Gradle distribution already available [ $version ]"
+    fun COULD_NOT_DELETE_FILE(localFile: File) = "Could not delete file [ ${localFile.absolutePath} ]"
 
 }
