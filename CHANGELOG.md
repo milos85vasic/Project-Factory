@@ -1,6 +1,6 @@
 # Version 1.0.0 Alpha 3
 
-- TBD.
+- Added git support
 
 # Version 1.0.0 Alpha 2
 
