@@ -307,12 +307,13 @@ abstract class ProjectFactory {
 
     private fun initGitRepository(project: Project, root: File) {
         if (project.git != null) {
-            logger.v("", Messages.GRADLE(Labels.GIT_REPOSITORY))
+            logger.v("", Messages.INITIALIZING(Labels.GIT_REPOSITORY))
             val pb = ProcessBuilder("git", "clone", project.git.cloneUrl, "./")
             pb.directory(root)
             if (pb.start().waitFor() != 0) {
                 throw GitInitializationException()
             }
+            logger.v("", Messages.INITIALIZED(Labels.GIT_REPOSITORY))
         }
     }
 
