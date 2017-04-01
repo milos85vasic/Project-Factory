@@ -1,6 +1,10 @@
 # Version 1.0.0 Beta 1
 
-- To be released
+- TBA / TBD
+
+# Version 1.0.0 Alpha 4
+
+- Bug fix: Messing up project group and package
 
 # Version 1.0.0 Alpha 3
 

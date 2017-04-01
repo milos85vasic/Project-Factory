@@ -26,7 +26,7 @@ groot.depend("net.milosvasic.logger", "Logger", "1.2.1")
 groot.depend("com.google.code.gson", "gson", "2.8.0")
 groot.depend("com.github.salomonbrys.kotson", "kotson", "2.5.0")
 
-final alpha = 3
+final alpha = 4
 final beta = 0
 final version = 1
 final secondaryVersion = 0
