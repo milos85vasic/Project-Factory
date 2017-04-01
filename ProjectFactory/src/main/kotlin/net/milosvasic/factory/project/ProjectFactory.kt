@@ -207,13 +207,13 @@ abstract class ProjectFactory {
 
         var packageDirectoryJava = mainJava.absolutePath
         var packageDirectoryTest = testava.absolutePath
-        module.pPackage.split(".").forEach {
+        module.group.split(".").forEach {
             packageElement ->
             packageDirectoryJava += File.separator + packageElement
             packageDirectoryTest += File.separator + packageElement
         }
-        packageDirectoryJava += File.separator + module.group
-        packageDirectoryTest += File.separator + module.group
+        packageDirectoryJava += File.separator + module.pPackage
+        packageDirectoryTest += File.separator + module.pPackage
         directories.add(File(packageDirectoryJava))
         directories.add(File(packageDirectoryTest))
 
